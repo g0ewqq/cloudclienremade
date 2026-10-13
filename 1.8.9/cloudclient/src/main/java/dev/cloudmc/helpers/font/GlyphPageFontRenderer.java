@@ -191,10 +191,10 @@ public class GlyphPageFontRenderer {
             }
 
             this.red = (float) (color >> 16 & 255) / 255.0F;
-            this.blue = (float) (color >> 8 & 255) / 255.0F;
-            this.green = (float) (color & 255) / 255.0F;
+            this.green = (float) (color >> 8 & 255) / 255.0F;
+            this.blue = (float) (color & 255) / 255.0F;
             this.alpha = (float) (color >> 24 & 255) / 255.0F;
-            GlStateManager.color(this.red, this.blue, this.green, this.alpha);
+            GlStateManager.color(this.red, this.green, this.blue, this.alpha);
             this.posX = x * 2.0f;
             this.posY = y * 2.0f;
             this.renderStringAtPos(text, dropShadow);

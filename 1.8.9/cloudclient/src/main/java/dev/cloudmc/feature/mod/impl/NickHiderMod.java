@@ -23,13 +23,18 @@ public class NickHiderMod extends Mod {
     }
 
     public static String replaceNickname(String nick) {
+        if (nick == null) {
+            return null;
+        }
         if(Cloud.INSTANCE != null) {
             if (Cloud.INSTANCE.modManager != null) {
                 if (Cloud.INSTANCE.modManager.getMod("NickHider").isToggled()) {
-                    return nick.replace(
-                            Cloud.INSTANCE.mc.getSession().getUsername(),
-                            Cloud.INSTANCE.settingManager.getSettingByModAndName("NickHider", "Nickname").getText()
-                    );
+                    String username = Cloud.INSTANCE.mc.getSession() != null ?
+                            Cloud.INSTANCE.mc.getSession().getUsername() : null;
+                    Setting nickname = Cloud.INSTANCE.settingManager.getSettingByModAndName("NickHider", "Nickname");
+                    if (username != null && nickname != null && nickname.getText() != null) {
+                        return nick.replace(username, nickname.getText());
+                    }
                 }
             }
         }

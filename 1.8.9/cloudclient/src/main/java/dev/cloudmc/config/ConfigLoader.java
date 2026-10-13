@@ -14,8 +14,8 @@ import dev.cloudmc.gui.Style;
 import dev.cloudmc.helpers.OSHelper;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class ConfigLoader {
 
@@ -23,18 +23,35 @@ public class ConfigLoader {
      * Loads the config from .minecraft/cloud/config.json
      */
 
-    public static void loadConfig() throws FileNotFoundException {
-        FileReader reader = new FileReader(OSHelper.getCloudDirectory() + "config.json");
+    public static void loadConfig() throws IOException {
+        Config config;
+        try (FileReader reader = new FileReader(OSHelper.getCloudDirectory() + "config.json")) {
+            config = new Gson().fromJson(reader, Config.class);
+        }
 
-        Config config = new Gson().fromJson(reader, Config.class);
+        if (config == null || config.getConfig() == null || config.getOptionsConfigList() == null) {
+            return;
+        }
 
-        for (int i = 0; i < config.getConfig().size(); i++) {
+        int modCount = Math.min(config.getConfig().size(), Cloud.INSTANCE.modManager.getMods().size());
+        for (int i = 0; i < modCount; i++) {
+            ModConfig modConfig = config.getConfig().get(i);
+            if (modConfig == null) {
+                continue;
+            }
             Mod mod = Cloud.INSTANCE.modManager.getMods().get(i);
-            mod.setToggled(config.getConfig().get(i).isToggled());
-            for (int j = 0; j < config.getConfig().get(i).getSettings().size(); j++) {
-                Setting configSetting = config.getConfig().get(i).getSettings().get(j);
+            mod.setToggled(modConfig.isToggled());
+            if (modConfig.getSettings() == null) {
+                continue;
+            }
+            int settingCount = Math.min(modConfig.getSettings().size(), Cloud.INSTANCE.settingManager.getSettingsByMod(mod).size());
+            for (int j = 0; j < settingCount; j++) {
+                Setting configSetting = modConfig.getSettings().get(j);
+                if (configSetting == null || configSetting.getMode() == null) {
+                    continue;
+                }
                 Setting clientSetting = Cloud.INSTANCE.settingManager.getSettingsByMod(mod).get(j);
-                switch (config.getConfig().get(i).getSettings().get(j).getMode()) {
+                switch (configSetting.getMode()) {
                     case "CheckBox":
                         boolean toggled = configSetting.isCheckToggled();
                         clientSetting.setCheckToggled(toggled);
@@ -70,15 +87,20 @@ public class ConfigLoader {
                 }
             }
 
-            if (Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()) != null) {
-                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setX(config.getConfig().get(i).getPositions()[0]);
-                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setY(config.getConfig().get(i).getPositions()[1]);
-                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setSize(config.getConfig().get(i).getSize());
+            if (Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()) != null
+                    && modConfig.getPositions() != null && modConfig.getPositions().length >= 2) {
+                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setX(modConfig.getPositions()[0]);
+                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setY(modConfig.getPositions()[1]);
+                Cloud.INSTANCE.hudEditor.getHudMod(mod.getName()).setSize(modConfig.getSize());
             }
         }
 
-        for(int i = 0; i < config.getOptionsConfigList().size(); i++){
+        int optionCount = Math.min(config.getOptionsConfigList().size(), Cloud.INSTANCE.optionManager.getOptions().size());
+        for(int i = 0; i < optionCount; i++){
             Option configOption = config.getOptionsConfigList().get(i);
+            if (configOption == null || configOption.getMode() == null) {
+                continue;
+            }
             Option clientOption = Cloud.INSTANCE.optionManager.getOptions().get(i);
             switch (configOption.getMode()) {
                 case "CheckBox":

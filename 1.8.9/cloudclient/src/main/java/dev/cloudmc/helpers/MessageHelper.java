@@ -21,17 +21,18 @@ public class MessageHelper {
     }
 
     public void renderMessage() {
+        if (message == null || subMessage == null) {
+            return;
+        }
         int messageWidth = Cloud.INSTANCE.fontHelper.size20.getStringWidth(subMessage) + 50;
         animate.update();
         animate.setMax(messageWidth);
         if (!(time > timeLength)) {
-            if(message != null && subMessage != null) {
-                Helper2D.drawRoundedRectangle(5 + animate.getValueI() - messageWidth, 5, messageWidth, 40, 2, 0x30ffffff, 0);
-                Helper2D.drawPicture(10 + animate.getValueI() - messageWidth, 10, 30, 30, -1, "icon/warning.png");
-                Cloud.INSTANCE.fontHelper.size30.drawString(message, 50 + animate.getValueI() - messageWidth, 12.5f, -1);
-                Cloud.INSTANCE.fontHelper.size20.drawString(subMessage, 50 + animate.getValueI() - messageWidth, 30, -1);
-                time++;
-            }
+            Helper2D.drawRoundedRectangle(5 + animate.getValueI() - messageWidth, 5, messageWidth, 40, 2, 0x30ffffff, 0);
+            Helper2D.drawPicture(10 + animate.getValueI() - messageWidth, 10, 30, 30, -1, "icon/warning.png");
+            Cloud.INSTANCE.fontHelper.size30.drawString(message, 50 + animate.getValueI() - messageWidth, 12.5f, -1);
+            Cloud.INSTANCE.fontHelper.size20.drawString(subMessage, 50 + animate.getValueI() - messageWidth, 30, -1);
+            time++;
         }
     }
 

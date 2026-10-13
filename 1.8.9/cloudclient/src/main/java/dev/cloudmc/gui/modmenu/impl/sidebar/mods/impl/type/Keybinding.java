@@ -13,7 +13,7 @@ import dev.cloudmc.gui.modmenu.impl.sidebar.mods.impl.Settings;
 import dev.cloudmc.helpers.MathHelper;
 import dev.cloudmc.helpers.render.Helper2D;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 
 public class Keybinding extends Settings {
@@ -96,13 +96,10 @@ public class Keybinding extends Settings {
      */
 
     @SubscribeEvent
-    public void onKey(TickEvent.ClientTickEvent e) {
-        int key = Keyboard.getEventKey();
-        if (active) {
-            setting.setKey(key);
-            if (Keyboard.isKeyDown(key)) {
-                active = false;
-            }
+    public void onKey(InputEvent.KeyInputEvent e) {
+        if (active && Keyboard.getEventKeyState() && Keyboard.getEventKey() != Keyboard.KEY_NONE) {
+            setting.setKey(Keyboard.getEventKey());
+            active = false;
         }
     }
 }

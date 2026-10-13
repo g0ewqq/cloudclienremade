@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class FullbrightMod extends Mod {
 
     private float oldGamma;
+    private boolean applied;
 
     public FullbrightMod() {
         super(
@@ -29,13 +30,19 @@ public class FullbrightMod extends Mod {
     @Override
     public void onEnable() {
         super.onEnable();
-        oldGamma = Cloud.INSTANCE.mc.gameSettings.gammaSetting;
+        if (!applied) {
+            oldGamma = Cloud.INSTANCE.mc.gameSettings.gammaSetting;
+            applied = true;
+        }
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        Cloud.INSTANCE.mc.gameSettings.gammaSetting = oldGamma;
+        if (applied) {
+            Cloud.INSTANCE.mc.gameSettings.gammaSetting = oldGamma;
+            applied = false;
+        }
     }
 
     @SubscribeEvent

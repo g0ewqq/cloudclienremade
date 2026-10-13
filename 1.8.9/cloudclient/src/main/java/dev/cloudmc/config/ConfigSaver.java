@@ -26,8 +26,6 @@ public class ConfigSaver {
     public static void saveConfig() throws IOException {
         createDir();
 
-        FileWriter writer = new FileWriter(OSHelper.getCloudDirectory() + "config.json");
-
         Config config = new Config();
 
         for (Mod mod : Cloud.INSTANCE.modManager.getMods()) {
@@ -52,8 +50,9 @@ public class ConfigSaver {
         config.setSnapping(Style.isSnapping());
 
         String json = new Gson().toJson(config);
-        writer.write(json);
-        writer.close();
+        try (FileWriter writer = new FileWriter(OSHelper.getCloudDirectory() + "config.json")) {
+            writer.write(json);
+        }
     }
 
     /**

@@ -240,6 +240,13 @@ public class Button {
         }
     }
 
+    public void dispose() {
+        for (Settings settings : settingsList) {
+            settings.unregister();
+        }
+        settingsList.clear();
+    }
+
     public Panel getPanel() {
         return panel;
     }

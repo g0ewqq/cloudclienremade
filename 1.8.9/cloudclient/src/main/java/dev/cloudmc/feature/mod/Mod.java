@@ -57,13 +57,15 @@ public class Mod {
     }
 
     public void setToggled(boolean toggled) {
+        if (this.toggled == toggled) {
+            return;
+        }
         this.toggled = toggled;
         callMethod();
     }
 
     public void toggle() {
-        toggled = !toggled;
-        callMethod();
+        setToggled(!toggled);
     }
 
     private void callMethod() {

@@ -99,6 +99,9 @@ public class Panel {
     }
 
     public void initButtons() {
+        for (Button button : buttonList) {
+            button.dispose();
+        }
         buttonList.clear();
         scrollHelperMods.setScrollStep(0);
         int addButtonX = 0;

@@ -35,6 +35,10 @@ public abstract class Settings {
 
     public abstract void keyTyped(char typedChar, int keyCode);
 
+    public void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(this);
+    }
+
     public Setting getSetting() {
         return setting;
     }

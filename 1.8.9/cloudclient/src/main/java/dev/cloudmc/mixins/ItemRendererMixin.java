@@ -51,6 +51,7 @@ public abstract class ItemRendererMixin {
 
     @Inject(method = "renderItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/RenderItem;renderItemModelForEntity(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/client/renderer/block/model/ItemCameraTransforms$TransformType;)V"))
     public void renderItem(EntityLivingBase entity, ItemStack item, ItemCameraTransforms.TransformType transformType, CallbackInfo ci) {
+        if (item == null || item.getItem() == null) return;
         if (!(item.getItem() instanceof ItemSword)) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(((EntityPlayer)entity).getItemInUseCount() > 0)) return;

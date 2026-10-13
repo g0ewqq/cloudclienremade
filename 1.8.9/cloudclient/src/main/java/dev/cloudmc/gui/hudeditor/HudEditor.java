@@ -6,6 +6,8 @@
 package dev.cloudmc.gui.hudeditor;
 
 import dev.cloudmc.Cloud;
+import dev.cloudmc.feature.mod.Mod;
+import dev.cloudmc.feature.option.Option;
 import dev.cloudmc.gui.Style;
 import dev.cloudmc.gui.hudeditor.impl.HudMod;
 import dev.cloudmc.gui.hudeditor.impl.impl.*;
@@ -120,11 +122,11 @@ public class HudEditor extends GuiScreen {
                 color
         );
 
+        int scroll = Mouse.getDWheel();
         for (HudMod hudMod : hudModList) {
             hudMod.renderMod(mouseX, mouseY);
             hudMod.updatePosition(mouseX, mouseY);
             if (hudMod.withinMod(mouseX, mouseY)) {
-                int scroll = Mouse.getDWheel();
                 if (scroll > 0 && hudMod.getSize() < 2) {
                     hudMod.setSize(hudMod.getSize() + 0.1f);
                 } else if (scroll < 0 && hudMod.getSize() > 0.5f) {
@@ -145,10 +147,10 @@ public class HudEditor extends GuiScreen {
             }
 
             for (HudMod sHudMod : hudModList) {
+                Mod sMod = Cloud.INSTANCE.modManager.getMod(sHudMod.getName());
                 if (
-                        Cloud.INSTANCE.modManager.getMod(sHudMod.getName()).isToggled() &&
+                        sMod != null && sMod.isToggled() &&
                                 hudMod.isDragging() &&
-                                !sHudMod.equals(hudMod) &&
                                 !sHudMod.equals(hudMod) &&
                                 Style.isSnapping()
                 ) {
@@ -300,7 +302,8 @@ public class HudEditor extends GuiScreen {
 
     @SubscribeEvent
     public void onKey(InputEvent.KeyInputEvent e) {
-        if (Keyboard.isKeyDown(Cloud.INSTANCE.optionManager.getOptionByName("ModMenu Keybinding").getKey())) {
+        Option keybinding = Cloud.INSTANCE.optionManager.getOptionByName("ModMenu Keybinding");
+        if (keybinding != null && Keyboard.getEventKeyState() && Keyboard.getEventKey() == keybinding.getKey()) {
             Cloud.INSTANCE.mc.displayGuiScreen(Cloud.INSTANCE.hudEditor);
         }
     }

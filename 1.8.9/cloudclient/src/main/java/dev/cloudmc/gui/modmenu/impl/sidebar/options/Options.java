@@ -35,6 +35,10 @@ public abstract class Options {
 
     public abstract void keyTyped(char typedChar, int keyCode);
 
+    public void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(this);
+    }
+
     public Option getOption() {
         return option;
     }

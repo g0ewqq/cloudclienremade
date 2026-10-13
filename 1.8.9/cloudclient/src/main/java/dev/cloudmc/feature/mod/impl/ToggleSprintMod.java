@@ -51,7 +51,7 @@ public class ToggleSprintMod extends Mod {
 
     @SubscribeEvent
     public void key(InputEvent.KeyInputEvent e) {
-        if(Keyboard.isKeyDown(getKey())){
+        if (Keyboard.getEventKeyState() && Keyboard.getEventKey() == getKey()) {
             toggled = !toggled;
         }
     }
